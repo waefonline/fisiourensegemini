@@ -4,8 +4,8 @@
 export default async function handler(request, response) {
     // Configurar CORS headers
     const allowedOrigins = [
-        'https://fisiourense.com',
-        'https://www.fisiourense.com',
+        'https://nexuscopier.com/fisiourensegemini/',
+        'https://www.nexuscopier.com/fisiourensegemini/',
         'http://localhost:3000', // Para desarrollo local
     ];
 
