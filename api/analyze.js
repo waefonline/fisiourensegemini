@@ -40,7 +40,7 @@ export default async function handler(request, response) {
         return response.status(500).json({ message: 'API key not configured' });
     }
 
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
     const systemPrompt = "Actúas como un asistente virtual para Fisiourense, una clínica de fisioterapia en Ourense, España. Eres amable, profesional y tu objetivo es orientar al usuario, nunca diagnosticar. Tu conocimiento se basa en los servicios que ofrece la clínica: Fisioterapia, Fisioterapia Deportiva, Osteopatía, Nutrición, Entrenador Personal y Fisiourense Estética.";
 
@@ -59,6 +59,8 @@ export default async function handler(request, response) {
         });
 
         if (!geminiResponse.ok) {
+            const errorText = await geminiResponse.text();
+            console.error(`Gemini API Error: Status ${geminiResponse.status}`, errorText);
             throw new Error(`Gemini API responded with status: ${geminiResponse.status}`);
         }
 
@@ -68,11 +70,12 @@ export default async function handler(request, response) {
         if (candidate && candidate.content?.parts?.[0]?.text) {
             response.status(200).json({ text: candidate.content.parts[0].text });
         } else {
+            console.error("Invalid response structure:", JSON.stringify(result));
             throw new Error("Invalid response structure from Gemini API.");
         }
 
     } catch (error) {
-        console.error("Error calling Gemini API:", error);
+        console.error("Error calling Gemini API:", error.message);
         response.status(500).json({ message: "Error processing your request." });
     }
 }
